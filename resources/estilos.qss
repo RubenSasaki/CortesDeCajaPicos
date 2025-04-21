@@ -1,0 +1,41 @@
+/* Color de fondo base */
+QWidget {
+    background-color: #f5f5f5;
+    font-family: 'Segoe UI';
+    font-size: 11pt;
+}
+
+/* Botones */
+QPushButton {
+    background-color: #1976d2;
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+}
+QPushButton:hover {
+    background-color: #1565c0;
+}
+QPushButton:pressed {
+    background-color: #0d47a1;
+}
+
+/* ComboBox y DateEdit */
+QComboBox, QDateEdit {
+    background-color: white;
+    padding: 3px;
+}
+
+/* Encabezados de tabla */
+QHeaderView::section {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    padding: 4px;
+    border: 1px solid #d0d0d0;
+}
+
+/* Tablas */
+QTableWidget {
+    background-color: white;
+    alternate-background-color: #f9f9f9;
+    selection-background-color: #d0eaff;
+}

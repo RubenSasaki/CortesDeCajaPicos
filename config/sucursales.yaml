@@ -1,0 +1,50 @@
+# Configuración de Fondos Fijos por Sucursal
+# Mantener actualizado con los valores oficiales
+
+sucursales:
+  - codigo: "01MATRIZ"
+    nombre: "Matriz Principal"
+    fondo_fijo: 2361.55
+    activa: true
+    
+  - codigo: "02IXCOTEL"
+    nombre: "Sucursal Ixcotel"
+    fondo_fijo: 6556.00
+    activa: true
+    
+  - codigo: "03SERRANO"
+    nombre: "Zona Serrano"
+    fondo_fijo: 7018.86
+    activa: true
+
+  - codigo: "04MONTOYA"
+    nombre: "Zona Serrano"
+    fondo_fijo: 3500.00
+    activa: true
+
+  - codigo: "05RIVERAS"
+    nombre: "Zona Serrano"
+    fondo_fijo: 2656.00
+    activa: true
+
+  - codigo: "06FERRO"
+    nombre: "Zona Serrano"
+    fondo_fijo: 2000.00
+    activa: true
+
+  - codigo: "07RIOS"
+    nombre: "Zona Serrano"
+    fondo_fijo: 2000.00
+    activa: true
+
+  - codigo: "08VOLCANES"
+    nombre: "Zona Serrano"
+    fondo_fijo: 2000.00
+    activa: true
+
+  - codigo: "09XOXO"
+    nombre: "Zona Serrano"
+    fondo_fijo: 2000.00
+    activa: true
+
+# ... otras sucursales

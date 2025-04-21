@@ -1,0 +1,16 @@
+{
+    "light": {
+        "--color-primary": "#407BFF",
+        "--color-text": "#2d3436",
+        "--color-bg": "#f5f6fa",
+        "--color-border": "#dcdde1",
+        "--color-card-bg": "#ffffff"
+    },
+    "dark": {
+        "--color-primary": "#6897ff",
+        "--color-text": "#ecf0f1",
+        "--color-bg": "#2d3436",
+        "--color-border": "#636e72",
+        "--color-card-bg": "#3b4448"
+    }
+}

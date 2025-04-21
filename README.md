@@ -73,3 +73,9 @@ ProyectoRevisionCortes/
 ├── .env
 └── README.md
 
+
+✅ Cómo instalar desde cero
+Quien clone el repo podrá hacer:
+pip install -r requirements.txt
+
+Y tendrá TODO funcionando.

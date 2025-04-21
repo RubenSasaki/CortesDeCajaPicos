@@ -15,6 +15,8 @@ from utils.tabla_helper import cargar_tabla
 from config.fondos import get_fondo_fijo
 from reports.exportador_excel import exportar_reporte
 from ui.components import crear_tabla, crear_panel_con_titulo
+from services.fondos import fondos
+from services.validaciones import validar_deposito_fondo
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -112,27 +114,47 @@ class MainWindow(QMainWindow):
         cargar_tabla(self.revision_tab.devoluciones, funciones_consulta['devoluciones'](fecha_str, sucursal_id, cuenta))
         cargar_tabla(self.revision_tab.corte, funciones_consulta['corte'](fecha_str, sucursal_id))
 
+        # === Depósitos ===
         depositos = obtener_depositos(fecha_str, sucursal_id)
 
         self.tabla_generales.setRowCount(0)
         self.tabla_origen.setRowCount(0)
         self.tabla_operacion.setRowCount(0)
 
+        config_fondo = fondos.get(sucursal_nombre, {})
+
         for i, fila in enumerate(depositos):
-            # TABLA 1
             self.tabla_generales.insertRow(i)
+            self.tabla_origen.insertRow(i)
+            self.tabla_operacion.insertRow(i)
+
+            # Validar contra fondo fijo esperado
+            validaciones = validar_deposito_fondo(fila, config_fondo)
+
+            # === TABLA 1: Generales
             for j in range(4):
                 self.tabla_generales.setItem(i, j, QTableWidgetItem(str(fila[j])))
 
-            # TABLA 2
-            self.tabla_origen.insertRow(i)
+            # === TABLA 2: Origen
             for j in range(4, 8):
-                self.tabla_origen.setItem(i, j - 4, QTableWidgetItem(str(fila[j])))
+                item = QTableWidgetItem(str(fila[j]))
+                if j == 4 and config_fondo:  # Cuenta Origen
+                    item.setBackground(QColor("#CCFFCC") if validaciones[0] else QColor("#FFCCCC"))
+                if j == 5 and config_fondo:  # Cuenta Desc
+                    item.setBackground(QColor("#CCFFCC") if validaciones[1] else QColor("#FFCCCC"))
+                self.tabla_origen.setItem(i, j - 4, item)
 
-            # TABLA 3
-            self.tabla_operacion.insertRow(i)
+            # === TABLA 3: Operación
             for j in range(8, 13):
-                self.tabla_operacion.setItem(i, j - 8, QTableWidgetItem(str(fila[j])))
+                item = QTableWidgetItem(str(fila[j]))
+                if j == 8 and config_fondo:  # Importe
+                    item.setBackground(QColor("#CCFFCC") if validaciones[2] else QColor("#FFCCCC"))
+                if j == 9 and config_fondo:  # Forma Pago
+                    item.setBackground(QColor("#CCFFCC") if validaciones[3] else QColor("#FFCCCC"))
+                if j == 12 and config_fondo:  # Estatus
+                    item.setBackground(QColor("#CCFFCC") if validaciones[4] else QColor("#FFCCCC"))
+                self.tabla_operacion.setItem(i, j - 8, item)
+        
 
 
         # === Resumen ===

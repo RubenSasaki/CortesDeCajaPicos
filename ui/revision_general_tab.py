@@ -26,7 +26,7 @@ class RevisionGeneralTab(QWidget):
         self.corte = crear_tabla(["Forma de Pago", "Importe"])
 
         bottom_layout = QHBoxLayout()
-        bottom_layout.addWidget(crear_panel_con_titulo("Comprobación de Diferencias", self.resumen), 2)
+        bottom_layout.addWidget(crear_panel_con_titulo("Comprobación de Diferencias", self.resumen,mostrar_boton=False), 2)
         bottom_layout.addWidget(crear_panel_con_titulo("Corte de Caja", self.corte), 1)
 
         bottom_widget = QWidget()

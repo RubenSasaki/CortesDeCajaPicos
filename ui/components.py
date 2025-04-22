@@ -5,6 +5,8 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 
+from PyQt6.QtGui import QIcon
+
 def crear_tabla(encabezados):
     tabla = QTableWidget()
     tabla.setColumnCount(len(encabezados))
@@ -29,34 +31,27 @@ def crear_tabla(encabezados):
 
     return tabla
 
-def crear_panel_con_titulo(titulo, tabla):
+def crear_panel_con_titulo(titulo, contenido_widget, mostrar_boton=True):
+    from PyQt6.QtWidgets import QPushButton, QLabel
+
     box = QGroupBox()
     layout = QVBoxLayout()
 
-    # Título + botón copiar
     top = QHBoxLayout()
     lbl = QLabel(f"<b>{titulo}</b>")
-    btn = QPushButton("Copiar")
-    btn.setFixedSize(70, 25)
-    btn.clicked.connect(lambda: copiar_tabla_al_portapapeles(tabla))
-
     top.addWidget(lbl)
     top.addStretch()
-    top.addWidget(btn)
+
+    if mostrar_boton:
+        btn = QPushButton("")        
+        btn.setIcon(QIcon("resources/icons/copy.svg"))
+        btn.setFixedSize(70, 25)
+        btn.setObjectName("secundario")
+        btn.clicked.connect(lambda: copiar_tabla_al_portapapeles(contenido_widget))
+        top.addWidget(btn)
 
     layout.addLayout(top)
-    layout.addWidget(tabla)
+    layout.addWidget(contenido_widget)
     box.setLayout(layout)
     return box
-
-def copiar_tabla_al_portapapeles(tabla: QTableWidget):
-    texto = ""
-    for fila in range(tabla.rowCount()):
-        valores = []
-        for col in range(tabla.columnCount()):
-            item = tabla.item(fila, col)
-            valores.append(item.text() if item else "")
-        texto += "\t".join(valores) + "\n"
-    QApplication.clipboard().setText(texto.strip())
-
 

@@ -1,7 +1,7 @@
 # ui/main_window.py
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QLabel, QPushButton, QComboBox, QDateEdit,
-    QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidgetItem, QMainWindow, QHeaderView,QSizePolicy
+    QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidgetItem, QMainWindow, QHeaderView,QSizePolicy,QGroupBox
 )
 from PyQt6.QtCore import QDate,Qt
 from PyQt6.QtGui import QColor
@@ -30,10 +30,16 @@ class MainWindow(QMainWindow):
             "-- Seleccione --", "01MATRIZ", "02IXCOTEL", "03SERRANO", "04MONTOYA",
             "05RIVERAS", "06FERRO", "07RIOS", "08VOLCANES", "09XOXO"
         ])
+        self.sucursal_combo.currentIndexChanged.connect(self.consultar)
+
 
         self.fecha_edit = QDateEdit()
         self.fecha_edit.setDate(QDate.currentDate())
         self.fecha_edit.setCalendarPopup(True)
+        
+        self.btn_hoy = QPushButton("Hoy")
+        self.btn_hoy.setObjectName("secundario")
+        self.btn_hoy.clicked.connect(lambda: self.fecha_edit.setDate(QDate.currentDate()))
 
         self.consultar_btn = QPushButton("Consultar")
         self.consultar_btn.clicked.connect(self.consultar)
@@ -42,9 +48,16 @@ class MainWindow(QMainWindow):
         top_layout = QHBoxLayout()
         top_layout.addWidget(QLabel("Fecha:"))
         top_layout.addWidget(self.fecha_edit)
+        top_layout.addWidget(self.btn_hoy)
+        top_layout.addSpacing(20)
         top_layout.addWidget(QLabel("Sucursal:"))
-        top_layout.addWidget(self.sucursal_combo)
+        top_layout.addWidget(self.sucursal_combo)        
+        top_layout.addStretch()
         top_layout.addWidget(self.consultar_btn)
+
+        top_container = QGroupBox("Filtros") # título encima de la card
+        top_container.setLayout(top_layout)
+        top_container.setObjectName("Filtros") # para el estilo QSS
 
         # === Tabs principales ===
         self.tabs = QTabWidget()
@@ -81,7 +94,7 @@ class MainWindow(QMainWindow):
 
         # === Layout principal ===
         main_layout = QVBoxLayout()
-        main_layout.addLayout(top_layout)
+        main_layout.addWidget(top_container)
         main_layout.addWidget(self.tabs)
 
         container = QWidget()
@@ -220,9 +233,10 @@ class MainWindow(QMainWindow):
 
         # Layout vertical para las 3 tablas
         layout = QVBoxLayout()
-        layout.addWidget(tabla_generales)
-        layout.addWidget(tabla_origen)
-        layout.addWidget(tabla_operacion)
+        layout.addWidget(crear_panel_con_titulo("Datos Generales", tabla_generales, mostrar_boton=False))
+        layout.addWidget(crear_panel_con_titulo("Cuenta / Origen", tabla_origen, mostrar_boton=False))
+        layout.addWidget(crear_panel_con_titulo("Datos de Operación", tabla_operacion, mostrar_boton=False))
+
 
         widget = QWidget()
         widget.setLayout(layout)        

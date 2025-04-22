@@ -44,9 +44,9 @@ pip install -r requirements.txt
 
 Crea un archivo .env con tus credenciales de SQL Server: 
 SQL_SERVER=mi_servidor_sql
-SQL_PORT=1433
-SQL_DATABASE=Intelisis6000
-SQL_USER=sa
+SQL_PORT=1234
+SQL_DATABASE=DataBases
+SQL_USER=user
 SQL_PASSWORD=*********
 
 Ejecuta el proyecto: 

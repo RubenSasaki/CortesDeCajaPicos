@@ -121,7 +121,7 @@ QDateEdit::drop-down {
 }
 
 QDateEdit::down-arrow {
-    image: url("resources/icons/calendar.svg");
+    image: url("resources/icons/calendar.png"); 
     width: 16px;
     height: 16px;
 }

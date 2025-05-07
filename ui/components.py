@@ -8,6 +8,9 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon
 
 def crear_tabla(encabezados):
+    from PyQt6.QtWidgets import QTableWidget, QHeaderView, QSizePolicy
+    from PyQt6.QtCore import Qt
+
     tabla = QTableWidget()
     tabla.setColumnCount(len(encabezados))
     tabla.setHorizontalHeaderLabels(encabezados)
@@ -17,17 +20,9 @@ def crear_tabla(encabezados):
     tabla.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
     tabla.setAlternatingRowColors(True)
     tabla.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-    tabla.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-    # Hacer que seleccione todo al hacer clic una vez
-    original_event = tabla.mousePressEvent
-
-    def mouse_press_override(event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            tabla.selectAll()
-        original_event(event)
-
-    tabla.mousePressEvent = mouse_press_override
+    # Responsivo en altura (autoajuste)
+    tabla.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
     return tabla
 
@@ -43,15 +38,28 @@ def crear_panel_con_titulo(titulo, contenido_widget, mostrar_boton=True):
     top.addStretch()
 
     if mostrar_boton:
-        btn = QPushButton("")        
-        btn.setIcon(QIcon("resources/icons/copy.svg"))
-        btn.setFixedSize(70, 25)
+        btn = QPushButton("Copy")        
+        #btn.setIcon(QIcon("resources/icons/copy.svg"))
+        #btn.setFixedSize(70, 25)
         btn.setObjectName("secundario")
         btn.clicked.connect(lambda: copiar_tabla_al_portapapeles(contenido_widget))
         top.addWidget(btn)
+
+
+
 
     layout.addLayout(top)
     layout.addWidget(contenido_widget)
     box.setLayout(layout)
     return box
 
+def copiar_tabla_al_portapapeles(tabla: QTableWidget):
+    from PyQt6.QtWidgets import QApplication
+    texto = ""
+    for fila in range(tabla.rowCount()):
+        valores = []
+        for col in range(tabla.columnCount()):
+            item = tabla.item(fila, col)
+            valores.append(item.text() if item else "")
+        texto += "\t".join(valores) + "\n"
+    QApplication.clipboard().setText(texto.strip())

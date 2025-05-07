@@ -112,4 +112,48 @@ def obtener_depositos(fecha, sucursal):
         con.close()
     return resultados
 
+def obtener_corte_z(fecha: str, sucursal: str):
+    query = f"EXEC xpCorteZPicos '{fecha}', '{sucursal}'"
+    con = obtener_conexion()
+    if not con:
+        print("[CorteZ] No se pudo conectar a la base de datos.")
+        return {}
 
+    try:
+        cursor = con.cursor()
+        cursor.execute(query)
+
+     # AVANZAR hasta que haya columnas reales
+        while cursor.description is None and cursor.nextset():
+            pass
+
+        if cursor.description is None:
+            print(f"[CorteZ] No se devolvieron resultados. Verifica fecha ({fecha}) y sucursal ({sucursal})")
+            return {}
+
+        columnas = [col[0] for col in cursor.description]
+        rows = cursor.fetchall()
+        cursor.close()
+        con.close()
+
+        secciones = {
+            1: "apertura",
+            2: "movimientos",
+            3: "corte",
+            4: "diferencia",
+            5: "ventas_credito"
+        }
+
+        datos = {nombre: [] for nombre in secciones.values()}
+        idx_cual = columnas.index("Cual")
+
+        for fila in rows:
+            cual = fila[idx_cual]
+            if cual in secciones:
+                datos[secciones[cual]].append(fila)
+
+        return {"columnas": columnas, "datos": datos}
+
+    except Exception as e:
+        print(f"[CorteZ] ERROR al ejecutar el SP: {e}")
+        return {}

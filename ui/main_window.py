@@ -7,6 +7,8 @@ from PyQt6.QtCore import QDate,Qt
 from PyQt6.QtGui import QColor
 
 from ui.revision_general_tab import RevisionGeneralTab
+from ui.corte_z_tab import CorteZTab
+
 from services.consulta_service import (
     obtener_facturas, obtener_notas, obtener_cobranza, obtener_devoluciones, obtener_corte, obtener_depositos
 )
@@ -17,6 +19,21 @@ from reports.exportador_excel import exportar_reporte
 from ui.components import crear_tabla, crear_panel_con_titulo
 from services.fondos import fondos
 from services.validaciones import validar_deposito_fondo
+
+from services.consulta_service import obtener_corte_z
+
+SUCURSALES = {
+    "01MATRIZ": "1",
+    "02IXCOTEL": "2",
+    "03SERRANO": "3",
+    "04MONTOYA": "4",
+    "05RIVERAS": "5",
+    "06FERRO": "6",
+    "07RIOS": "7",
+    "08VOLCANES": "8",
+    "09XOXO": "9"
+}
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -60,11 +77,18 @@ class MainWindow(QMainWindow):
         top_container.setObjectName("Filtros") # para el estilo QSS
 
         # === Tabs principales ===
+
         self.tabs = QTabWidget()
+
         self.revision_tab = RevisionGeneralTab()
         self.tabs.addTab(self.revision_tab, "Revisión General")
+
+        self.corte_z_tab = CorteZTab()
+        self.tabs.addTab(self.corte_z_tab, "Corte Z")
+
         self.deposito_tab = self.crear_tab_depositos()
         self.tabs.addTab(self.deposito_tab, "Depósito Caja")
+
 
         # === Pestaña de Reportes ===
         reporte_widget = QWidget()
@@ -107,7 +131,10 @@ class MainWindow(QMainWindow):
         if sucursal_nombre == "-- Seleccione --":
             return
 
-        sucursal_id = str(self.sucursal_combo.currentIndex())
+        #sucursal_id = str(self.sucursal_combo.currentIndex())
+        
+        sucursal_id = SUCURSALES.get(sucursal_nombre, "0")
+
         cuenta = sucursal_nombre
         fecha_qdate = self.fecha_edit.date()
         fecha_str = fecha_qdate.toString("yyyy/MM/dd")
@@ -199,6 +226,29 @@ class MainWindow(QMainWindow):
         depositos = obtener_depositos(fecha_str, sucursal_id)
         tabla = self.tabs.widget(1).findChild(type(self.revision_tab.facturas))
         cargar_tabla(tabla, depositos)
+
+        
+        # === Corte Z ===
+        try:
+            print("==== TEST: CORTE Z ====")
+            resultado = obtener_corte_z(fecha_str, sucursal_id)
+
+            if not resultado:
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.information(self, "Sin datos", "No se encontraron datos del Corte Z para la fecha y sucursal seleccionadas.")
+                return
+
+            columnas = resultado.get("columnas", [])
+            datos = resultado.get("datos", {})
+            self.corte_z_tab.actualizar_tablas(columnas, datos)
+
+        except Exception as e:
+            print(f"[ERROR Corte Z] {e}")
+
+
+
+
+        # === Ajustar tamaño de tablas ===
 
     def crear_tab_depositos(self):
         from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem
